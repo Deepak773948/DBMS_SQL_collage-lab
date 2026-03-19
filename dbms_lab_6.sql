@@ -1,8 +1,5 @@
--- =========================================
 -- DB LAB 6 : GROUP BY AND HAVING
 -- Final Oracle Compatible Script
--- =========================================
-
 
 -- Part A: Basic Aggregate Queries
 
