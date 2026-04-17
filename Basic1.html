@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Basic Online Test</title>
+
+<style>
+body{
+    font-family: Arial;
+    background: linear-gradient(to right,#4facfe,#00f2fe);
+    margin:0;
+}
+
+.container{
+    max-width:600px;
+    margin:auto;
+    margin-top:40px;
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    text-align:center;
+}
+
+.option{
+    display:block;
+    background:#eee;
+    margin:8px;
+    padding:10px;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+.option:hover{ background:#ddd; }
+
+button{
+    padding:10px 20px;
+    background:#4facfe;
+    color:white;
+    border:none;
+    margin-top:10px;
+    cursor:pointer;
+}
+
+.correct{ background:lightgreen; }
+.wrong{ background:#ffb3b3; }
+</style>
+
+</head>
+
+<body>
+
+<div class="container" id="app">
+
+<h2>Enter Name</h2>
+<input type="text" id="name" placeholder="Your Name">
+<br><br>
+<button onclick="start()">Start Test</button>
+
+</div>
+
+<script>
+
+let questions=[
+{q:"H2O क्या है?",o:["ऑक्सीजन","पानी","हाइड्रोजन","CO2"],a:"पानी"},
+{q:"Sun कहाँ है?",o:["आसमान","धरती","समुद्र","घर"],a:"आसमान"},
+{q:"2+2=?",o:["3","4","5","6"],a:"4"},
+{q:"भारत की राजधानी?",o:["पटना","दिल्ली","मुंबई","कोलकाता"],a:"दिल्ली"},
+{q:"सबसे बड़ा ग्रह?",o:["मंगल","शुक्र","बृहस्पति","पृथ्वी"],a:"बृहस्पति"}
+];
+
+let i=0,score=0,answers=[],username="";
+
+function start(){
+    username=document.getElementById("name").value;
+    if(username===""){ alert("नाम डालो"); return; }
+
+    document.getElementById("app").innerHTML=`
+    <h3>${username}</h3>
+    <h3 id="q"></h3>
+    <div id="opt"></div>
+    <button onclick="next()">Next</button>
+    `;
+    load();
+}
+
+function load(){
+    document.getElementById("q").innerText=questions[i].q;
+
+    let html="";
+    questions[i].o.forEach(op=>{
+        html+=`<label class="option">
+        <input type="radio" name="opt" value="${op}"> ${op}
+        </label>`;
+    });
+
+    document.getElementById("opt").innerHTML=html;
+
+    document.querySelectorAll("input[name='opt']").forEach(el=>{
+        el.onchange=()=>{
+            answers[i]=el.value;
+        }
+    });
+}
+
+function next(){
+
+    if(answers[i]===undefined){
+        alert("पहले answer चुनो");
+        return;
+    }
+
+    if(i<questions.length-1){
+        i++;
+        load();
+    }else{
+        showResult();
+    }
+}
+
+function showResult(){
+    score=0;
+
+    questions.forEach((q,index)=>{
+        if(q.a===answers[index]) score++;
+    });
+
+    let percent=(score/questions.length)*100;
+
+    document.getElementById("app").innerHTML=`
+    <h2>${username}</h2>
+    <h3>Score: ${score}/${questions.length}</h3>
+    <h3>${percent}%</h3>
+    <button onclick="review()">Review</button>
+    `;
+}
+
+function review(){
+    let html="<h2>Review</h2>";
+
+    questions.forEach((q,index)=>{
+        html+=`<h4>${q.q}</h4>`;
+
+        q.o.forEach(op=>{
+            let cls="";
+            if(op===q.a) cls="correct";
+            else if(op===answers[index]) cls="wrong";
+
+            html+=`<div class="option ${cls}">${op}</div>`;
+        });
+    });
+
+    document.getElementById("app").innerHTML=html;
+}
+
+</script>
+
+</body>
+</html>
